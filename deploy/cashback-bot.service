@@ -1,0 +1,25 @@
+[Unit]
+Description=Cashback Telegram bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+StateDirectory=cashback-bot
+StateDirectoryMode=0700
+EnvironmentFile=/etc/cashback-bot.env
+Environment=CASHBACK_DB=/var/lib/cashback-bot/cashback.sqlite3
+ExecStart=/usr/bin/python3 -B /opt/cashback-bot/cashback.py
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+CPUWeight=25
+Nice=10
+MemoryMax=250M
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

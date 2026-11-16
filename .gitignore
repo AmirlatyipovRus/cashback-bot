@@ -1,0 +1,10 @@
+__pycache__/
+*.sqlite3*
+.env
+.env.*
+/november-2026.json
+/Изображение ChatGPT*.png
+*.pem
+*.key
+*.log
+.DS_Store
