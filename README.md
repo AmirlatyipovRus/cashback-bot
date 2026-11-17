@@ -1,21 +1,48 @@
-# Бот кэшбэка
+# Cashback Bot
 
-Бот принимает скриншоты с активными категориями Т-Банка, Озон Банка, ВБ Банка и Яндекс Пэй. Выбери банк, проверь распознанный текст и сохрани список. Для ручного ввода используй /add. За каждый месяц хранится один список на банк.
+A self-hosted Telegram bot for choosing which card to use at checkout. It compares the monthly rates you have saved and estimates the reward when you include the purchase amount.
 
-Напиши «Пятёрочка, 3000 ₽» или «аптеки». Бот сравнит сохранённые ставки текущего месяца по Москве. Сумма в рублях — оценка по ставке. Для неизвестного магазина можно указать категорию из карточки банка. Категория операции зависит от торговой точки и может отличаться от предположения бота.
+## Try the workflow
 
-## Установка на Ubuntu 24.04
+1. Send a screenshot of your monthly categories, or enter them with `/add`.
+2. Choose the bank, review the OCR draft, and confirm the categories.
+3. Ask about a store or a category, such as `аптеки, 1200 ₽`.
+4. Use **Сравнить карты** to see the saved offers side by side. `/checkout` opens shortcuts and recent purchases.
 
-1. Создай Telegram-бота через @BotFather.
-2. Скопируй проект на VPS и запусти `sudo sh deploy/install.sh` из каталога проекта.
-3. Открой `/etc/cashback-bot.env` от root и заполни `TELEGRAM_BOT_TOKEN`. Если у бота уже настроен webhook, его нужно удалить через Telegram API перед запуском polling.
-4. Запусти `sudo systemctl enable --now cashback-bot`. Отправь боту /start, чтобы узнать свой Telegram ID. Запиши его в `TELEGRAM_OWNER_ID` и выполни `sudo systemctl restart cashback-bot`. Только этот аккаунт может менять категории и получать рекомендации.
-5. Для проверки запуска выполни `sudo systemctl status cashback-bot`. Журнал доступен через `sudo journalctl -u cashback-bot -n 30`.
+The bot recognizes aliases in `knowledge.json` and can remember a category correction. The example below uses fictional rates.
 
-Сервис получает сообщения исходящими запросами к Telegram. Tesseract обрабатывает изображения на VPS. В SQLite сохраняются условия и черновик. База сервиса находится в `/var/lib/cashback-bot/cashback.sqlite3`.
+| Purchase | Card A | Card B |
+| --- | --- | --- |
+| Pharmacy, 1,200 ₽ | 5% ≈ 60 ₽ | 2% ≈ 24 ₽ |
 
-После запуска добавь ставки через /add или пришли скриншот. Для Яндекс Пэй расчёт отображается в баллах Плюса.
+Rates depend on your saved offers and the merchant category applied by the bank. Yandex Pay rewards are displayed in Plus points.
 
-Справочник `knowledge.json` связывает названия магазинов и типичные покупки с категориями. Если в запросе есть известный магазин, бот использует его категорию. Для покупки без указания магазина категория определяется предположительно.
+## Architecture
 
-Команда `/checkout` открывает режим «У кассы» с быстрыми категориями и пятью последними покупками. «Сравнить карты» показывает ставки по всем настроенным картам за текущий месяц. «Уточнить категорию» сохраняет привязку для последнего запроса без суммы, чтобы использовать её в следующих рекомендациях. В меню «Обновить месяц» (`/add`) можно увидеть, какие банки уже заполнены, и собрать ставки с нескольких скриншотов в один черновик.
+```mermaid
+flowchart LR
+  A[Telegram Bot API] <-->|Long polling| B[Python bot]
+  B -->|Screenshot| C[Tesseract OCR]
+  C -->|Draft for review| B
+  B <-->|Categories, corrections and recent purchases| D[(SQLite)]
+  E[Merchant and purchase aliases] --> B
+```
+
+## Install on Ubuntu 24.04
+
+1. Create a bot via [BotFather](https://t.me/BotFather).
+2. Clone this repository and run `sudo sh deploy/install.sh` from its root. The script installs Tesseract with English and Russian language data and registers a systemd service.
+3. Set `TELEGRAM_BOT_TOKEN` in `/etc/cashback-bot.env`. If the bot has a webhook, remove it before starting long polling.
+4. Run `sudo systemctl enable --now cashback-bot` and send `/start` to get your Telegram ID. Set `TELEGRAM_OWNER_ID` in the same file, then run `sudo systemctl restart cashback-bot`.
+5. Check `sudo systemctl status cashback-bot` and add your first rates. The service stores data in `/var/lib/cashback-bot/cashback.sqlite3`.
+
+The installation is for a single configured owner. Use your own bot and keep service credentials outside the repository.
+
+## Verify
+
+```sh
+python3 -m py_compile cashback.py
+sh -n deploy/install.sh
+```
+
+On your own installation, confirm that a screenshot creates a draft, save a test category, compare cards for a sample purchase, and restart the service to verify persistence.
