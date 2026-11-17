@@ -11,9 +11,7 @@ A self-hosted Telegram bot for choosing which card to use at checkout. It compar
 
 The bot recognizes aliases in `knowledge.json` and can remember a category correction. The example below uses fictional rates.
 
-| Purchase | Card A | Card B |
-| --- | --- | --- |
-| Pharmacy, 1,200 ₽ | 5% ≈ 60 ₽ | 2% ≈ 24 ₽ |
+![Illustrative Telegram chat comparing two fictional rates for a pharmacy purchase](assets/cashback-demo.svg)
 
 Rates depend on your saved offers and the merchant category applied by the bank. Yandex Pay rewards are displayed in Plus points.
 

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="290" viewBox="0 0 680 290" role="img" aria-labelledby="title">
+  <title id="title">Illustrative Telegram conversation comparing two fictional cashback cards</title>
+  <rect width="680" height="290" rx="18" fill="#edf2f7"/>
+  <rect x="28" y="24" width="624" height="46" rx="12" fill="#17263a"/>
+  <g font-family="system-ui, sans-serif" font-size="19">
+    <text x="48" y="54" fill="#fff" font-weight="700">Cashback Bot</text>
+    <text x="625" y="54" text-anchor="end" fill="#c6d7f0" font-size="15">Fictional rates</text>
+    <rect x="326" y="91" width="326" height="44" rx="14" fill="#d2e8f9"/>
+    <text x="345" y="120" fill="#17263a">Аптеки, 1200 ₽</text>
+    <rect x="28" y="152" width="440" height="112" rx="14" fill="#fff"/>
+    <text x="48" y="187" fill="#17263a" font-weight="700">Карта A · 5% · ≈ 60 ₽</text>
+    <text x="48" y="216" fill="#465a72">Карта B · 2% · ≈ 24 ₽</text>
+    <text x="48" y="245" fill="#2262a2" font-size="16">Сравнить карты</text>
+  </g>
+</svg>
